@@ -8,6 +8,7 @@ public partial class CameraRenderer
     private const string bufferName = "YLCamera";
     static ShaderTagId unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
     static ShaderTagId litShaderTagId = new ShaderTagId("YLLit");
+    
 
     Lighting lighting = new Lighting();
     

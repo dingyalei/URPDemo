@@ -51,7 +51,7 @@ public class Lighting
             {
                 SetupDirectionLight(index++, light);
             }
-
+            
             if (index > maxDirLightCount)
             {
                 break;

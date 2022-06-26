@@ -8,5 +8,6 @@ struct Surface
     float alpha;
     float smoothness;
     float metallic;
+    float3 viewDirection;
 };
 #endif
