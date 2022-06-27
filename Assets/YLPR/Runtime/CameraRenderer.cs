@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[ExecuteInEditMode]
 public partial class CameraRenderer
 {
     private const string bufferName = "YLCamera";

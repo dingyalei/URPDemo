@@ -9,11 +9,11 @@ public class YLRenderPipeline : RenderPipeline
     CameraRenderer renderer = new CameraRenderer();
     bool useDynamicBatching, useGPUInstancing;
 
-    public YLRenderPipeline(bool useDynamicBatching, bool useGPUInstancing, bool useSROBatcher)
+    public YLRenderPipeline(bool useDynamicBatching, bool useGPUInstancing, bool useSRPBatcher)
     {
         this.useDynamicBatching = useDynamicBatching;
         this.useGPUInstancing = useGPUInstancing;
-        GraphicsSettings.useScriptableRenderPipelineBatching = useSROBatcher;
+        GraphicsSettings.useScriptableRenderPipelineBatching = useSRPBatcher;
         // gamma -> liner
         GraphicsSettings.lightsUseLinearIntensity = true;
     }

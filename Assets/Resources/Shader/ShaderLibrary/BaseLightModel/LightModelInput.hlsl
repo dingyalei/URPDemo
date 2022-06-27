@@ -6,10 +6,10 @@
 CBUFFER_START(UnityPerMaterial)
     uniform half4 _Color;
     uniform sampler2D _MainTex;
-    uniform half _Specular;
+    uniform half _SpecularPow;
     uniform half _Roughness;
     uniform half _Fresnel;
-
+    uniform half _DirectionalLightCount;
     uniform half4 _DirectionalLightColors[MAX_DIRECTIONAL_LIGHT_COUNT];
     uniform half4 _DirectionalLightDirections[MAX_DIRECTIONAL_LIGHT_COUNT];
 
