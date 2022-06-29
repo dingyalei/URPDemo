@@ -9,16 +9,16 @@ public partial class CameraRenderer
     private const string bufferName = "YLCamera";
     static ShaderTagId unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
     static ShaderTagId litShaderTagId = new ShaderTagId("YLLit");
-    
+
 
     Lighting lighting = new Lighting();
-    
+
     private CommandBuffer buffer = new CommandBuffer
     {
         name = bufferName
     };
-    
-    
+
+
     ScriptableRenderContext context;
 
     Camera camera;
@@ -26,35 +26,41 @@ public partial class CameraRenderer
     // 剔除
     CullingResults cullingResults;
 
-    public void Render(ScriptableRenderContext contex, Camera camera, bool useDynamicBatching, bool useGPUInstancing)
+    public void Render(ScriptableRenderContext contex, Camera camera, bool useDynamicBatching, bool useGPUInstancing,ShadowSettings shadowSettings)
     {
         this.context = contex;
         this.camera = camera;
         PrepareBuffer();
         PrepareForSceneWindow();
 
-        if (!Cull())
+        if (!Cull(shadowSettings.maxDistance))
         {
             return;
         }
-        
+
+        buffer.BeginSample(SampleName);
+        ExecuteBuffer();
+        lighting.Setup(contex, cullingResults,shadowSettings);
+        buffer.EndSample(SampleName);
         Setup();
-        lighting.Setup(contex,cullingResults);
         DrawVisibleGeometry(useDynamicBatching, useGPUInstancing);
         DrawUnsupportedShaders();
         DrawGizmos();
+        lighting.Cleanup();
         Submit();
     }
 
 
-    bool Cull()
+    bool Cull(float maxShadowDistance)
     {
         ScriptableCullingParameters p;
         if (camera.TryGetCullingParameters(out p))
         {
+            p.shadowDistance = Mathf.Min(maxShadowDistance, camera.farClipPlane);
             cullingResults = context.Cull(ref p);
             return true;
         }
+
         return false;
     }
 
@@ -75,6 +81,7 @@ public partial class CameraRenderer
     {
         buffer.EndSample(SampleName);
         ExecuteBuffer();
+        
         context.Submit();
     }
 
@@ -97,7 +104,7 @@ public partial class CameraRenderer
             enableInstancing = useGPUInstancing,
             enableDynamicBatching = useDynamicBatching
         };
-        drawingSetting.SetShaderPassName(1,litShaderTagId);
+        drawingSetting.SetShaderPassName(1, litShaderTagId);
         // 设置 可以被绘制的类型
         var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
 

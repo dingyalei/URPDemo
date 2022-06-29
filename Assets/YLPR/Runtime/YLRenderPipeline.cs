@@ -8,11 +8,13 @@ public class YLRenderPipeline : RenderPipeline
 {
     CameraRenderer renderer = new CameraRenderer();
     bool useDynamicBatching, useGPUInstancing;
-
-    public YLRenderPipeline(bool useDynamicBatching, bool useGPUInstancing, bool useSRPBatcher)
+    private ShadowSettings shadowsSettings;
+    
+    public YLRenderPipeline(bool useDynamicBatching, bool useGPUInstancing, bool useSRPBatcher,ShadowSettings shadowSettings)
     {
         this.useDynamicBatching = useDynamicBatching;
         this.useGPUInstancing = useGPUInstancing;
+        this.shadowsSettings = shadowSettings;
         GraphicsSettings.useScriptableRenderPipelineBatching = useSRPBatcher;
         // gamma -> liner
         GraphicsSettings.lightsUseLinearIntensity = true;
@@ -23,7 +25,7 @@ public class YLRenderPipeline : RenderPipeline
     {
         foreach (var camera in cameras)
         {
-            renderer.Render(context, camera, useDynamicBatching, useGPUInstancing);
+            renderer.Render(context, camera, useDynamicBatching, useGPUInstancing,shadowsSettings);
         }
 
 

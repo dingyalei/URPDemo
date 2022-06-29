@@ -392,8 +392,11 @@
 "Assets/YLPR/Runtime/CameraRenderer.cs"
 "Assets/YLPR/Runtime/CameraRenderer.Editor.cs"
 "Assets/YLPR/Runtime/Light.cs"
+"Assets/YLPR/Runtime/Shadows.cs"
 "Assets/YLPR/Runtime/YLRenderPipeline.cs"
 "Assets/YLPR/Runtime/YLRenderPiplineAsset.cs"
+"Assets/YLPR/Settings/Directional.cs"
+"Assets/YLPR/Settings/ShadowSettings.cs"
 -langversion:9.0
 
 /deterministic

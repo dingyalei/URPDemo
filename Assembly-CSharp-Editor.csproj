@@ -41,7 +41,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Editor\CustomShaderGUI.cs" />
+     <Compile Include="Assets\YLPR\Editor\CustomShaderGUI.cs" />
      <Reference Include="UnityEngine">
      <HintPath>F:\DevelopTools\Unity\Engine\2021.3.4f1c1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>
