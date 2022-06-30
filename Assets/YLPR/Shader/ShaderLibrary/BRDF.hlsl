@@ -7,7 +7,7 @@ struct BRDF
 {
     float3 diffuse;
     float3 specular;
-    float3 roughness;
+    float roughness;
 };
 
 float SpecularStrength(Surface surface, BRDF brdf, Light light)
