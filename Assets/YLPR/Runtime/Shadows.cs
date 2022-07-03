@@ -9,7 +9,6 @@ public class Shadows
     const int maxShadowedDirectionalLightCount = 4;
     static int dirShadowAtlasId = Shader.PropertyToID("_DirectionalShadowAtlas");
     static int dirShadowMatricesId = Shader.PropertyToID("_DirectionalShadowMatrices");
-    static int dirLightShadowDataId = Shader.PropertyToID("_DirectionalLightShadowData");
     
     static Matrix4x4[] dirShadowMatrices = new Matrix4x4[maxShadowedDirectionalLightCount];
     
@@ -39,13 +38,15 @@ public class Shadows
         ShadowedDirectionalLightCount = 0;
     }
 
-    public void ReserveDirectionalShadows(Light light, int visibleLightIndex)
+    public Vector2  ReserveDirectionalShadows(Light light, int visibleLightIndex)
     {
         if (ShadowedDirectionalLightCount < maxShadowedDirectionalLightCount && light.shadows != LightShadows.None && light.shadowStrength > 0f
         && cullResults.GetShadowCasterBounds(visibleLightIndex,out Bounds b))
         {
-            ShadowedDirectionalLights[ShadowedDirectionalLightCount++] = new ShadowedDirectionalLight(){visibleLightIndex = visibleLightIndex};
+            ShadowedDirectionalLights[ShadowedDirectionalLightCount] = new ShadowedDirectionalLight(){visibleLightIndex = visibleLightIndex};
+            return new Vector2(light.shadowStrength, ShadowedDirectionalLightCount++);
         }
+        return Vector2.zero;
     }
 
     void ExecuteBuffer()
@@ -79,6 +80,7 @@ public class Shadows
         {
             RenderDirectionalShadows(i,split,tileSize);
         }
+        buffer.SetGlobalMatrixArray(dirShadowMatricesId, dirShadowMatrices);
         buffer.EndSample(bufferName);
         ExecuteBuffer();
     }
@@ -91,20 +93,50 @@ public class Shadows
             tileSize, 0f, out Matrix4x4 viewMatrix, out Matrix4x4 projectionMatrix, out ShadowSplitData splitData
         );
         shadowSetting.splitData = splitData;
-        SetTileViewport(index,split,tileSize);
+       // SetTileViewport(index,split,tileSize);
+        dirShadowMatrices[index] = ConvertToAtlasMatrix(projectionMatrix * viewMatrix,
+            SetTileViewport(index, split, tileSize), split);
         buffer.SetViewProjectionMatrices(viewMatrix,projectionMatrix);
         ExecuteBuffer();
         context.DrawShadows(ref shadowSetting);
     }
 
-    void SetTileViewport(int index, int split, float tileSize)
+    Vector2  SetTileViewport(int index, int split, float tileSize)
     {
         Vector2 offset = new Vector2(index%split, index/split);
         buffer.SetViewport(new Rect(offset.x * tileSize, offset.y * tileSize,tileSize,tileSize));
+        return offset;
     }
     public void Cleanup()
     {
         buffer.ReleaseTemporaryRT(dirShadowAtlasId);
         ExecuteBuffer();
+    }
+    //返回一个从世界空间到阴影图块空间的转换矩阵
+    Matrix4x4 ConvertToAtlasMatrix(Matrix4x4 m, Vector2 offset, int split)
+    {
+        //如果使用了反向Zbuffer
+        if (SystemInfo.usesReversedZBuffer)
+        {
+            m.m20 = -m.m20;
+            m.m21 = -m.m21;
+            m.m22 = -m.m22;
+            m.m23 = -m.m23;
+        }
+        //设置矩阵坐标
+        float scale = 1f / split;
+        m.m00 = (0.5f * (m.m00 + m.m30) + offset.x * m.m30) * scale;
+        m.m01 = (0.5f * (m.m01 + m.m31) + offset.x * m.m31) * scale;
+        m.m02 = (0.5f * (m.m02 + m.m32) + offset.x * m.m32) * scale;
+        m.m03 = (0.5f * (m.m03 + m.m33) + offset.x * m.m33) * scale;
+        m.m10 = (0.5f * (m.m10 + m.m30) + offset.y * m.m30) * scale;
+        m.m11 = (0.5f * (m.m11 + m.m31) + offset.y * m.m31) * scale;
+        m.m12 = (0.5f * (m.m12 + m.m32) + offset.y * m.m32) * scale;
+        m.m13 = (0.5f * (m.m13 + m.m33) + offset.y * m.m33) * scale;
+        m.m20 = 0.5f * (m.m20 + m.m30);
+        m.m21 = 0.5f * (m.m21 + m.m31);
+        m.m22 = 0.5f * (m.m22 + m.m32);
+        m.m23 = 0.5f * (m.m23 + m.m33);
+        return m;
     }
 }

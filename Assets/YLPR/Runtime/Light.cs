@@ -22,10 +22,13 @@ public class Lighting
     static int dirLightCountId = Shader.PropertyToID("_DirectionalLightCount");
     static int dirLightColorsId = Shader.PropertyToID("_DirectionalLightColors");
     static int dirLightDirectionsId = Shader.PropertyToID("_DirectionalLightDirections");
+    static int dirLightShadowDataId = Shader.PropertyToID("_DirectionalLightShadowData");
+    
 
     //存储可见光的颜色和方向
     static Vector4[] dirLightColors = new Vector4[maxDirLightCount];
     static Vector4[] dirLightDirections = new Vector4[maxDirLightCount];
+    static Vector4[] dirLightShadowData = new Vector4[maxDirLightCount];
     
     // shadow
     Shadows shadows = new Shadows();
@@ -46,7 +49,7 @@ public class Lighting
     {
         dirLightColors[index] = visibleLight.finalColor;
         dirLightDirections[index] = -visibleLight.localToWorldMatrix.GetColumn(2);
-        shadows.ReserveDirectionalShadows(visibleLight.light,index);
+        dirLightShadowData[index] = shadows.ReserveDirectionalShadows(visibleLight.light, index);
     }
 
     void SetupLights()
@@ -70,6 +73,7 @@ public class Lighting
         buffer.SetGlobalInt(dirLightCountId, index);
         buffer.SetGlobalVectorArray(dirLightColorsId, dirLightColors);
         buffer.SetGlobalVectorArray(dirLightDirectionsId, dirLightDirections);
+        buffer.SetGlobalVectorArray(dirLightShadowDataId, dirLightShadowData);
     }
 
     public void Cleanup()

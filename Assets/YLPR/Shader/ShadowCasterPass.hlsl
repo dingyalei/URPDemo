@@ -1,10 +1,6 @@
 #ifndef YLPR_SHADOW_CASTER_PASS_INCLUDE
 #define YLPR_SHADOW_CASTER_PASS_INCLUDE
 #include "./ShaderLibrary/Common.hlsl"
-#include "./ShaderLibrary/Surface.hlsl"
-#include "./ShaderLibrary/Light.hlsl"
-#include "./ShaderLibrary/BRDF.hlsl"
-#include "./ShaderLibrary/Lighting.hlsl"
 
 
 TEXTURE2D(_BaseMap);
@@ -42,7 +38,6 @@ Varyings ShadowCasterPassVertex(Attributes input)
     output.baseUV = input.baseUV * baseST.xy + baseST.zw;
     return output;
 }
-
 
 void ShadowCasterPassFragment(Varyings input)
 {

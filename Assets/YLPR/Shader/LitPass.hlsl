@@ -2,10 +2,10 @@
 #define YLPR_LIT_PASS_INCLUDE
 #include "./ShaderLibrary/Common.hlsl"
 #include "./ShaderLibrary/Surface.hlsl"
+#include "./ShaderLibrary/Shadows.hlsl"
 #include "./ShaderLibrary/Light.hlsl"
 #include "./ShaderLibrary/BRDF.hlsl"
 #include "./ShaderLibrary/Lighting.hlsl"
-
 
 
 TEXTURE2D(_BaseMap);
@@ -62,6 +62,7 @@ float4 LitFrag(Varyings input):SV_TARGET
 #if defined(_CLIPPING)
     clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
 #endif
+    surface.positon = input.positionWS;
     surface.normal = normalize(input.normalWS);
     surface.viewDirection = normalize(_WorldSpaceCameraPos - input.positionWS);
     surface.color = base.rgb;
@@ -74,6 +75,6 @@ float4 LitFrag(Varyings input):SV_TARGET
     BRDF brdf = GetBRDF(surface);
 #endif
     float3 color = GetLighting(surface,brdf);
-    return float4(color,surface.alpha);
+    return float4(color,1.0);
 }
 #endif
