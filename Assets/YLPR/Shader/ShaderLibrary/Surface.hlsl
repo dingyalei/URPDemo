@@ -10,5 +10,7 @@ struct Surface
     float smoothness;
     float metallic;
     float3 viewDirection;
+
+    float depth;
 };
 #endif

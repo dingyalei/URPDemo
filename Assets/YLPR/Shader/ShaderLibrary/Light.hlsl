@@ -21,21 +21,22 @@ int GetDirectionLightCount()
    return _DirectionalLightCount;
 }
 
-DirectionalShadowData GetDirectionalShadowData(int lightIndex)
+DirectionalShadowData GetDirectionalShadowData(int lightIndex,ShadowData shadowdata)
 {
    DirectionalShadowData data;
-   data.strength = _DirectionalLightShadowData[lightIndex].x;
-   data.tileIndex = _DirectionalLightShadowData[lightIndex].y;
+   data.strength = _DirectionalLightShadowData[lightIndex].x * shadowdata.strength;
+   data.tileIndex = _DirectionalLightShadowData[lightIndex].y + shadowdata.cascadeIndex;
+   data.normalBias =  _DirectionalLightShadowData[lightIndex].z;
    return data;
 }
 
-Light GetDirectionalLight(int index,Surface surface)
+Light GetDirectionalLight(int index,Surface surface,ShadowData shadowData)
 {
    Light light;
    light.color = _DirectionalLightColors[index].rgb;
    light.direction = _DirectionalLightDirections[index].rgb;
-   DirectionalShadowData data = GetDirectionalShadowData(index);
-   light.attenuation = GetDirectionalShadowAttenuation(data,surface);
+   DirectionalShadowData data = GetDirectionalShadowData(index,shadowData);
+   light.attenuation = GetDirectionalShadowAttenuation(data,shadowData,surface);
    return light;
 }
 

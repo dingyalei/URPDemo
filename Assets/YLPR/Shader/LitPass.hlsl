@@ -65,6 +65,7 @@ float4 LitFrag(Varyings input):SV_TARGET
     surface.positon = input.positionWS;
     surface.normal = normalize(input.normalWS);
     surface.viewDirection = normalize(_WorldSpaceCameraPos - input.positionWS);
+    surface.depth = -TransformWorldToView(input.positionWS).z;
     surface.color = base.rgb;
     surface.alpha = base.a;
     surface.metallic = meta;
