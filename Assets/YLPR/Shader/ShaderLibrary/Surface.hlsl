@@ -3,7 +3,7 @@
 
 struct Surface
 {
-    float3 positon;
+    float3 position;
     float3 normal;
     float3 color;
     float alpha;
@@ -12,5 +12,7 @@ struct Surface
     float3 viewDirection;
 
     float depth;
+
+    float dither;
 };
 #endif

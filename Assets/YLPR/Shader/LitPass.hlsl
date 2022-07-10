@@ -62,7 +62,7 @@ float4 LitFrag(Varyings input):SV_TARGET
 #if defined(_CLIPPING)
     clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
 #endif
-    surface.positon = input.positionWS;
+    surface.position = input.positionWS;
     surface.normal = normalize(input.normalWS);
     surface.viewDirection = normalize(_WorldSpaceCameraPos - input.positionWS);
     surface.depth = -TransformWorldToView(input.positionWS).z;
@@ -70,6 +70,7 @@ float4 LitFrag(Varyings input):SV_TARGET
     surface.alpha = base.a;
     surface.metallic = meta;
     surface.smoothness = smooth;
+    surface.dither = InterleavedGradientNoise(input.positionCS.xy, 0);
 #if defined (_PREMULTIPLY_ALPHA)    
     BRDF brdf = GetBRDF(surface,true);
 #else
