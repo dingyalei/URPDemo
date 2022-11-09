@@ -16,8 +16,12 @@ public class Shadows
     private static int shadowDistanceFadeId = Shader.PropertyToID("_ShadowDistanceFade");
     private static int cascadeDataId = Shader.PropertyToID("_CascadeData");
     static int shadowAtlasSizeId = Shader.PropertyToID("_ShadowAtlasSize");
-    
-    
+
+    static string[] shadowMaskKeywords =
+    {
+        "_SHADOW_MASK_DISTANCE"
+    };
+
     private static string[] directionalFilterKeywords =
     {
         "_DIRECTIONAL_PCF3",
@@ -54,13 +58,14 @@ public class Shadows
     private ScriptableRenderContext context;
     private CullingResults cullResults;
     private ShadowSettings shadowSetting;
-
+    bool useShadowMask;
     public void Setup(ScriptableRenderContext context, CullingResults results, ShadowSettings shadowSetting)
     {
         this.context = context;
         this.cullResults = results;
         this.shadowSetting = shadowSetting;
         ShadowedDirectionalLightCount = 0;
+        useShadowMask = false;
     }
 
     public Vector3 ReserveDirectionalShadows(Light light, int visibleLightIndex)
@@ -88,6 +93,10 @@ public class Shadows
         {
             RenderDirectionalShadows();
         }
+        buffer.BeginSample(bufferName);
+        SetKeywords(shadowMaskKeywords,useShadowMask?0:-1);
+        buffer.EndSample(bufferName);
+        ExecuteBuffer();
     }
 
     private void RenderDirectionalShadows()
